@@ -9,7 +9,7 @@ import org.apache.spark.storage.StorageLevel
 
 import scala.collection.mutable
 
-case class JsonToCsvTransformer(inputDir: String, outputDir: String)(implicit val spark: SparkSession) {
+case class JsonToCsvTransformer(inputDir: String, outputDir: String)(implicit val spark: SparkSession, implicit val top: Int = 0) {
   import spark.implicits._
 
   def transform : Unit= {
@@ -17,6 +17,7 @@ case class JsonToCsvTransformer(inputDir: String, outputDir: String)(implicit va
     transformReviewData()
     transformCheckinData()
     transformUserData()
+    transformTipData()
   }
 
   def transformBusinessData(): Unit = {
@@ -39,13 +40,23 @@ case class JsonToCsvTransformer(inputDir: String, outputDir: String)(implicit va
     saveCheckinData(checkinDS)
   }
 
+  def transformTipData(): Unit = {
+    val tipDS = getDataset(JsonToCsvTransformer.tipSchema, JsonToCsvTransformer.tipFilename).as[tip]
+    saveTipData(tipDS)
+  }
+
   private def getDataset(schema: StructType, filename: String): DataFrame = {
-    spark
+    val df = spark
       .read
       .option("inferSchema", "false")
       .schema(schema)
       .json(s"${inputDir}/${filename}")
       .persist(StorageLevel.MEMORY_AND_DISK)
+
+    if (top > 0)
+      df.limit(top)
+    else
+      df
   }
 
   private def saveBusinessData(ds :Dataset[business]) : Unit = {
@@ -111,6 +122,14 @@ case class JsonToCsvTransformer(inputDir: String, outputDir: String)(implicit va
       .csv(s"${outputDir}/checkin")
   }
 
+  private def saveTipData(ds :Dataset[tip]) : Unit = {
+    ds.write
+      .option("delimiter", "\t")
+      .option("header","true")
+      .mode(SaveMode.Overwrite)
+      .csv(s"${outputDir}/tip")
+  }
+
   private def flattenSchema(schema: StructType, prefix: String = null): Array[Column] = {
     schema.fields.flatMap(f => {
       val colName = if (prefix == null) f.name else (prefix + "." + f.name)
@@ -128,11 +147,13 @@ object JsonToCsvTransformer{
   final val reviewSchema = Encoders.product[review].schema
   final val userSchema = Encoders.product[user].schema
   final val checkinSchema = Encoders.product[checkin].schema
+  final val tipSchema = Encoders.product[tip].schema
 
   final val businessFilename = "business.json"
   final val reviewFilename = "review.json"
   final val userFilename = "user.json"
   final val checkinFilename = "checkin.json"
+  final val tipFilename = "tip.json"
 
   def main( args:Array[String] ):Unit = {
     val sparkConf = new SparkConf().setAppName("yelp-data-challenge").setMaster("local[*]")
