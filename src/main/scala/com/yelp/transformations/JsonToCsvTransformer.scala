@@ -173,7 +173,9 @@ case class JsonToCsvTransformer(inputDir: String, outputDir: String)(implicit va
   }
 
   private def saveTipData(ds :Dataset[tip]) : Unit = {
-    ds.write
+    ds
+      .withColumn("text", regexp_replace($"text", "\n+|\r+", ""))
+      .write
       .option("delimiter", "\t")
       .option("header","true")
       .mode(SaveMode.Overwrite)

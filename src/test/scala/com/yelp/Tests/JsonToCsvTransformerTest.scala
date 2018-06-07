@@ -10,6 +10,9 @@ class JsonToCsvTransformerTest extends FlatSpec with BeforeAndAfterAllConfigMap 
   var inputDir = "input/dataset"
   var outputDir = "output/"
 
+  val sparkConf = new SparkConf().setAppName("yelp-data-challenge-test").setMaster("local[*]")
+  implicit val spark = SparkSession.builder().config(sparkConf).getOrCreate()
+
   override def beforeAll(configMap: ConfigMap): Unit = {
     inputDir = configMap.get("input").getOrElse(inputDir).toString
     outputDir= configMap.get("output").getOrElse(outputDir).toString
@@ -19,9 +22,6 @@ class JsonToCsvTransformerTest extends FlatSpec with BeforeAndAfterAllConfigMap 
   }
 
   "transformBusinessData" should " produce the same number of records as in business.json" in {
-    val sparkConf = new SparkConf().setAppName("yelp-data-challenge-test").setMaster("local[*]")
-    implicit val spark = SparkSession.builder().config(sparkConf).getOrCreate()
-
 //    JsonToCsvTransformer.apply(inputDir, outputDir).transformBusinessData()
     val inputDF = spark
       .read
@@ -40,20 +40,16 @@ class JsonToCsvTransformerTest extends FlatSpec with BeforeAndAfterAllConfigMap 
 
     println("Business expected:" + expected)
     println("Business actual:" + actual)
-    spark.stop()
 
     assert(expected == actual)
   }
 
   "transformReviewData" should " produce the same number of records as in review.json" in {
-
-    val sparkConf = new SparkConf().setAppName("yelp-data-challenge-test").setMaster("local[*]")
-    implicit val spark = SparkSession.builder().config(sparkConf).getOrCreate()
-
 //    JsonToCsvTransformer.apply(inputDir, outputDir).transformReviewData()
     val inputDF = spark
       .read
       .option("inferSchema", "false")
+      .schema(JsonToCsvTransformer.reviewSchema)
       .json(s"${inputDir}/${JsonToCsvTransformer.reviewFilename}")
 
     val outputDF = spark
@@ -64,9 +60,9 @@ class JsonToCsvTransformerTest extends FlatSpec with BeforeAndAfterAllConfigMap 
 
     val expected = inputDF.count()
     val actual = outputDF.count()
+
     println("Review expected:" + expected)
     println("Review actual:" + actual)
-    spark.stop()
 
 //    The hero that found the existence of CR in the text
 //    outputDF.as("df1").join(inputDF.as("df2"), Seq("review_id"), "left").where(inputDF("review_id").isNull)
@@ -80,9 +76,6 @@ class JsonToCsvTransformerTest extends FlatSpec with BeforeAndAfterAllConfigMap 
   }
 
   "transformUserData" should " produce the same number of records as in user.json" in {
-    val sparkConf = new SparkConf().setAppName("yelp-data-challenge-test").setMaster("local[*]")
-    implicit val spark = SparkSession.builder().config(sparkConf).getOrCreate()
-
 //    JsonToCsvTransformer.apply(inputDir, outputDir).transformUserData()
     val inputDF = spark
       .read
@@ -100,16 +93,13 @@ class JsonToCsvTransformerTest extends FlatSpec with BeforeAndAfterAllConfigMap 
     val actual = outputDF.count()
     println("User expected:" + expected)
     println("User actual:" + actual)
-    spark.stop()
 
     assert(expected == actual)
   }
 
   "transformCheckinData" should " produce the same number of records as in checkin.json" in {
-    val sparkConf = new SparkConf().setAppName("yelp-data-challenge-test").setMaster("local[*]")
-    implicit val spark = SparkSession.builder().config(sparkConf).getOrCreate()
-
 //    JsonToCsvTransformer.apply(inputDir, outputDir).transformCheckinData()
+
     val inputDF = spark
       .read
       .option("inferSchema", "false")
@@ -127,16 +117,13 @@ class JsonToCsvTransformerTest extends FlatSpec with BeforeAndAfterAllConfigMap 
 
     println("Checkin expected:" + expected)
     println("Checkin actual:" + actual)
-    spark.stop()
 
     assert(expected == actual)
   }
 
   "transformTipData" should " produce the same number of records as in tip.json" in {
-    val sparkConf = new SparkConf().setAppName("yelp-data-challenge-test").setMaster("local[*]")
-    implicit val spark = SparkSession.builder().config(sparkConf).getOrCreate()
-
 //    JsonToCsvTransformer.apply(inputDir, outputDir).transformTipData()
+
     val inputDF = spark
       .read
       .option("inferSchema", "false")
@@ -154,23 +141,13 @@ class JsonToCsvTransformerTest extends FlatSpec with BeforeAndAfterAllConfigMap 
 
     println("Checkin expected:" + expected)
     println("Checkin actual:" + actual)
-    spark.stop()
 
     assert(expected == actual)
   }
 
   "runQueries" should " show queries results" in {
-    val sparkConf = new SparkConf().setAppName("yelp-data-challenge-test").setMaster("local[*]")
-    implicit val spark = SparkSession.builder().config(sparkConf).getOrCreate()
-
     JsonToCsvTransformer.apply(inputDir, outputDir).runQueries()
-    spark.stop()
 
     assert(true)
-  }
-
-
-  override def afterAll(configMap: ConfigMap): Unit = {
-
   }
 }
