@@ -18,6 +18,50 @@ case class JsonToCsvTransformer(inputDir: String, outputDir: String)(implicit va
     transformCheckinData()
     transformUserData()
     transformTipData()
+    transformPhotoData()
+  }
+
+  def runQueries(): Unit = {
+    val businessDF = spark
+      .read
+      .option("header", "true")
+      .option("delimiter", "\t")
+      .csv(s"${outputDir}/business/*.csv")
+
+    businessDF.createOrReplaceTempView("business")
+    val top10PopularBussiness = spark.sql("SELECT name, business_id, stars from business SORT BY stars DESC LIMIT 10")
+
+    top10PopularBussiness
+      .write
+      .option("header", "true")
+      .option("delimiter", "\t")
+      .mode(SaveMode.Overwrite)
+      .csv(s"${outputDir}/queries/top10popular_business")
+
+    val top10torontoBusiness = spark.sql("SELECT name, business_id, city from business WHERE city='Toronto' SORT BY stars DESC LIMIT 10")
+    top10torontoBusiness
+      .write
+      .option("header", "true")
+      .option("delimiter", "\t")
+      .mode(SaveMode.Overwrite)
+      .csv(s"${outputDir}/queries/top10toronto_business")
+
+    val userDF = spark
+      .read
+      .option("header", "true")
+      .option("delimiter", "\t")
+      .csv(s"${outputDir}/user/*.csv")
+
+    userDF.createOrReplaceTempView("users")
+
+    val top10popularUsers = spark.sql("SELECT user_id, name, average_stars from users SORT BY average_stars DESC LIMIT 10")
+    top10popularUsers
+      .write
+      .option("header", "true")
+      .option("delimiter", "\t")
+      .mode(SaveMode.Overwrite)
+      .csv(s"${outputDir}/queries/top10popular_users")
+
   }
 
   def transformBusinessData(): Unit = {
@@ -45,10 +89,16 @@ case class JsonToCsvTransformer(inputDir: String, outputDir: String)(implicit va
     saveTipData(tipDS)
   }
 
-  private def getDataset(schema: StructType, filename: String): DataFrame = {
+  def transformPhotoData(): Unit = {
+    val photoDS = getDataset(JsonToCsvTransformer.photosSchema, JsonToCsvTransformer.photosFilename).as[photo]
+    savePhotosData(photoDS)
+  }
+
+  private def getDataset(schema: StructType, filename: String, multiLine:Boolean = false): DataFrame = {
     val df = spark
       .read
       .option("inferSchema", "false")
+      .option("multiLine", multiLine.toString)
       .schema(schema)
       .json(s"${inputDir}/${filename}")
       .persist(StorageLevel.MEMORY_AND_DISK)
@@ -130,6 +180,14 @@ case class JsonToCsvTransformer(inputDir: String, outputDir: String)(implicit va
       .csv(s"${outputDir}/tip")
   }
 
+  private def savePhotosData(ds :Dataset[photo]) : Unit = {
+    ds.write
+      .option("delimiter", "\t")
+      .option("header","true")
+      .mode(SaveMode.Overwrite)
+      .csv(s"${outputDir}/photos")
+  }
+
   private def flattenSchema(schema: StructType, prefix: String = null): Array[Column] = {
     schema.fields.flatMap(f => {
       val colName = if (prefix == null) f.name else (prefix + "." + f.name)
@@ -148,12 +206,14 @@ object JsonToCsvTransformer{
   final val userSchema = Encoders.product[user].schema
   final val checkinSchema = Encoders.product[checkin].schema
   final val tipSchema = Encoders.product[tip].schema
+  final val photosSchema = Encoders.product[photo].schema
 
   final val businessFilename = "business.json"
   final val reviewFilename = "review.json"
   final val userFilename = "user.json"
   final val checkinFilename = "checkin.json"
   final val tipFilename = "tip.json"
+  final val photosFilename = "photos.json"
 
   def main( args:Array[String] ):Unit = {
     val sparkConf = new SparkConf().setAppName("yelp-data-challenge").setMaster("local[*]")

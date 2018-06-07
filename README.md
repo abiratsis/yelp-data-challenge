@@ -47,5 +47,5 @@ Then type the next command:
 testOnly **.JsonToCsvTransformerTest -- -Dinput=file:///C:/Users/BEST_USER/Desktop/dataset -Doutput=file:///C:/Users/BEST_USER/Desktop/yelp-data-challenge/out
 ```
 
-This will execute all tests under the JsonToCsvTransformerTest and takes paramteters the input/output directories to read/write data respectively.  
+This will execute all tests under the JsonToCsvTransformerTest and takes paramteters the input/output directories in order to read/write data respectively.  
 
