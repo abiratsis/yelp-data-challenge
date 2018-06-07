@@ -7,8 +7,8 @@ import org.apache.spark.sql.SparkSession
 import org.scalatest.{BeforeAndAfterAllConfigMap, ConfigMap, FlatSpec}
 
 class JsonToCsvTransformerTest extends FlatSpec with BeforeAndAfterAllConfigMap {
-  var inputDir = "C:\\Users\\abiratsis.OLBICO\\Desktop\\dataset"
-  var outputDir = "C:\\Users\\abiratsis.OLBICO\\Desktop\\yelp-data-challenge\\out"
+  var inputDir = "input/dataset"
+  var outputDir = "output/"
 
   override def beforeAll(configMap: ConfigMap): Unit = {
     inputDir = configMap.get("input").getOrElse(inputDir).toString

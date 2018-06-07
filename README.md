@@ -28,13 +28,28 @@ docker build --rm -t yelp-data-challenge .
 This will build a docker container named yelp-data-challenge. Next run the container with:
 
 ```
-docker run -it -v PROJECT_DIR/Docker/in:/opt/spark/data/in -e YELP_DATA_PATH=/opt/spark/data/in/yelp_dataset.tar.gz yelp-data-challenge /bin/bash
+docker run -it -v PROJECT_DIR/Docker/in:/opt/spark/data/in -v PROJECT_DIR/Docker/out:/opt/spark/data/out -e YELP_DATA_PATH=/opt/spark/data/in/yelp_dataset.tar.gz yelp-data-challenge /bin/bash
 ```
 The command accepts the following parameters:
 
 * -it: run container in foreground mode
-* -v: map shared directory, here you should place the input data (yelp_dataset.tar.gz)
+* -v: shared directories between host machine and docker container, here you should place the input/output data (yelp_dataset.tar.gz)
 * -e: YELP_DATA_PATH is the argument which holds the data path. We will use this one through the Docker procees to extract and read the data.
+
+## Spark job
+The yelp-data-challenge_2.11-0.1.jar contains the Spark job responsible for the transormations from JSON to tabular format. The next command is part of exec_spark.sh which contains all the bash commands that should be executed as the docker entrypoint.
+
+```
+bin/spark-submit --driver-memory 4g --executor-memory 2g --class com.yelp.transformations.JsonToCsvTransformer /opt/spark/yelp-data-challenge_2.11-0.1.jar --sourceDir /tmp/dataset --outputDir /opt/spark/data/out  
+```
+Notice that all the results will be stored under /opt/spark/data/out folder. This is a shared directory and can be accessed through PROJECT_DIR/Docker/Data/out from the host machine.
+
+## Running queries
+To run the queries execute the next command from sbt:
+```
+testOnly **.JsonToCsvTransformerTest -- -z "runQueries"
+```
+This with run the runQueries method of the JsonToCsvTransformer class and will save the results under the /opt/spark/data/out/queries folder or PROJECT_DIR/Docker/Data/out/queries from the host machine
 
 ## Running Unit tests
 Navigate under project's root directory and execute from the command line:
