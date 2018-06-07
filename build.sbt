@@ -18,6 +18,9 @@ libraryDependencies ++= {
     "org.scala-lang" % "scala-compiler" % "2.11.8",
 
     "org.apache.logging.log4j" % "log4j-api" % "2.11.0",
-    "org.apache.logging.log4j" % "log4j-core" % "2.11.0" % Runtime
+    "org.apache.logging.log4j" % "log4j-core" % "2.11.0" % Runtime,
+
+    "org.scalatest" % "scalatest_2.11" % "3.0.5" % "test",
+    "org.scalacheck" %% "scalacheck" % "1.14.0"
   )
 }

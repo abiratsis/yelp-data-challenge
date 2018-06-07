@@ -122,7 +122,6 @@
     <orderEntry type="library" name="sbt: org.apache.httpcomponents:httpclient:4.3.6:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.httpcomponents:httpcore:4.3.3:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.ivy:ivy:2.4.0:jar" level="project" />
-    <orderEntry type="library" name="sbt: org.apache.kafka:kafka-clients:0.11.0.0:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.logging.log4j:log4j-api:2.11.0:jar" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="sbt: org.apache.logging.log4j:log4j-core:2.11.0:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.parquet:parquet-column:1.8.2:jar" level="project" />
@@ -138,7 +137,6 @@
     <orderEntry type="library" name="sbt: org.apache.spark:spark-network-shuffle_2.11:2.2.0:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.spark:spark-sketch_2.11:2.2.0:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.spark:spark-sql_2.11:2.2.0:jar" level="project" />
-    <orderEntry type="library" name="sbt: org.apache.spark:spark-streaming_2.11:2.2.0:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.spark:spark-tags_2.11:2.2.0:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.spark:spark-unsafe_2.11:2.2.0:jar" level="project" />
     <orderEntry type="library" name="sbt: org.apache.xbean:xbean-asm5-shaded:4.4:jar" level="project" />
@@ -177,12 +175,10 @@
     <orderEntry type="library" name="sbt: org.roaringbitmap:RoaringBitmap:0.5.11:jar" level="project" />
     <orderEntry type="library" name="sbt: org.scala-lang:scala-compiler:2.11.8:jar" level="project" />
     <orderEntry type="library" name="sbt: org.scala-lang:scala-reflect:2.11.8:jar" level="project" />
-    <orderEntry type="library" name="sbt: org.scala-lang:scala-swing:2.11.0-M7:jar" level="project" />
     <orderEntry type="library" name="sbt: org.scala-lang.modules:scala-parser-combinators_2.11:1.0.4:jar" level="project" />
     <orderEntry type="library" name="sbt: org.scala-lang.modules:scala-xml_2.11:1.0.6:jar" level="project" />
     <orderEntry type="library" name="sbt: org.slf4j:jcl-over-slf4j:1.7.16:jar" level="project" />
     <orderEntry type="library" name="sbt: org.slf4j:jul-to-slf4j:1.7.16:jar" level="project" />
-    <orderEntry type="library" name="sbt: org.slf4j:slf4j-api:1.7.25:jar" level="project" />
     <orderEntry type="library" name="sbt: org.slf4j:slf4j-log4j12:1.7.16:jar" level="project" />
     <orderEntry type="library" name="sbt: org.sonatype.sisu.inject:cglib:2.2.1-v20090111:jar" level="project" />
     <orderEntry type="library" name="sbt: org.spark-project.spark:unused:1.0.0:jar" level="project" />
@@ -192,5 +188,10 @@
     <orderEntry type="library" name="sbt: xerces:xercesImpl:2.9.1:jar" level="project" />
     <orderEntry type="library" name="sbt: xml-apis:xml-apis:1.3.04:jar" level="project" />
     <orderEntry type="library" name="sbt: xmlenc:xmlenc:0.52:jar" level="project" />
+    <orderEntry type="library" scope="TEST" name="sbt: org.scalactic:scalactic_2.11:3.0.5:jar" level="project" />
+    <orderEntry type="library" scope="TEST" name="sbt: org.scalatest:scalatest_2.11:3.0.5:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.slf4j:slf4j-api:1.7.16:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.scala-sbt:test-interface:1.0:jar" level="project" />
+    <orderEntry type="library" name="sbt: org.scalacheck:scalacheck_2.11:1.14.0:jar" level="project" />
   </component>
 </module>
